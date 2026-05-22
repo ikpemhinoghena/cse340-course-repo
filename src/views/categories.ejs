@@ -1,14 +1,13 @@
 <%- include('partials/header') %>
 
 <section class="page-section">
-    <h1>Service Project Categories</h1>
+    <h1><%= title %></h1>
     <p>Browse opportunities by category:</p>
     
     <ul class="category-list">
-        <li>Environmental</li>
-        <li>Educational</li>
-        <li>Community Service</li>
-        <li>Health and Wellness</li>
+        <% categories.forEach(category => { %>
+            <li><%= category.name %></li>
+        <% }); %>
     </ul>
 </section>
 

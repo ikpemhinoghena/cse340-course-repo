@@ -1,3 +1,4 @@
+import { getAllCategories } from './src/models/categories.js';
 import { testConnection } from './src/models/db.js';
 import { getAllOrganizations } from './src/models/organizations.js';
 import express from 'express';
@@ -40,7 +41,11 @@ app.get('/organizations', async (req, res) => {
     res.render('organizations', { title, organizations });
 });
 app.get('/projects', (req, res) => renderPage(req, res, 'projects', 'Service Projects'));
-app.get('/categories', (req, res) => renderPage(req, res, 'categories', 'Categories'));
+app.get('/categories', async (req, res) => {
+    const categories = await getAllCategories();
+    const title = 'Service Project Categories';
+    res.render('categories', { title, categories });
+});
 
 // Start Server
 app.listen(PORT, async () => {
