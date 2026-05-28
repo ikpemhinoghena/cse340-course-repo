@@ -3,7 +3,7 @@ import db from './db.js';
 const getAllCategories = async() => {
     const query = `
         SELECT category_id, name
-        FROM public.category;
+        FROM category;
     `;
 
     const result = await db.query(query);
