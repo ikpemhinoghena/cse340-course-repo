@@ -1,10 +1,9 @@
-import { getAllCategories } from './src/models/categories.js';
-import { testConnection } from './src/models/db.js';
-import { getAllOrganizations } from './src/models/organizations.js';
 import express from 'express';
 import dotenv from 'dotenv';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import { testConnection } from './src/models/db.js';
+import router from './src/routes.js'; // Import the new router
 
 // Load environment variables
 dotenv.config();
@@ -23,29 +22,58 @@ app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'src/views'));
 app.use(express.static(path.join(__dirname, 'public')));
 
-// Route Handler Helper (Async/Await pattern)
-const renderPage = async (req, res, pageName, pageTitle) => {
-  try {
-    res.render(pageName, { title: pageTitle });
-  } catch (error) {
-    console.error(`Error rendering ${pageName}:`, error);
-    res.status(500).send('Internal Server Error');
-  }
-};
+// --- MIDDLEWARE STARTS HERE ---
 
-// Routes
-app.get('/', (req, res) => renderPage(req, res, 'home', 'Home'));
-app.get('/organizations', async (req, res) => {
-    const organizations = await getAllOrganizations();
-    const title = 'Our Partner Organizations';
-    res.render('organizations', { title, organizations });
+// Middleware to log all incoming requests
+app.use((req, res, next) => {
+    if (NODE_ENV === 'development') {
+        console.log(`${req.method} ${req.url}`);
+    }
+    next(); 
 });
-app.get('/projects', (req, res) => renderPage(req, res, 'projects', 'Service Projects'));
-app.get('/categories', async (req, res) => {
-    const categories = await getAllCategories();
-    const title = 'Service Project Categories';
-    res.render('categories', { title, categories });
+
+// Middleware to make NODE_ENV available to all templates
+app.use((req, res, next) => {
+    res.locals.NODE_ENV = NODE_ENV;
+    next();
 });
+
+// --- MIDDLEWARE ENDS HERE ---
+
+// Use the imported router to handle all main routes
+app.use(router);
+
+// --- ERROR HANDLING STARTS HERE ---
+
+// Catch-all route for 404 errors (Must be after all real routes)
+app.use((req, res, next) => {
+    const err = new Error('Page Not Found');
+    err.status = 404;
+    next(err);
+});
+
+// Global error handler (Must have 4 parameters: err, req, res, next)
+app.use((err, req, res, next) => {
+    // Log error details for debugging
+    console.error('Error occurred:', err.message);
+    console.error('Stack trace:', err.stack);
+    
+    // Determine status and template
+    const status = err.status || 500;
+    const template = status === 404 ? '404' : '500';
+    
+    // Prepare data for the template
+    const context = {
+        title: status === 404 ? 'Page Not Found' : 'Server Error',
+        error: err.message,
+        stack: err.stack
+    };
+    
+    // Render the appropriate error template
+    res.status(status).render(`errors/${template}`, context);
+});
+
+// --- ERROR HANDLING ENDS HERE ---
 
 // Start Server
 app.listen(PORT, async () => {
