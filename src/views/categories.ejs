@@ -1,14 +1,14 @@
 <%- include('partials/header') %>
-
-<section class="page-section">
+<main class="content-wrapper">
     <h1><%= title %></h1>
     <p>Browse opportunities by category:</p>
     
     <ul class="category-list">
         <% categories.forEach(category => { %>
-            <li><%= category.name %></li>
+            <li>
+                <a href="/category/<%= category.category_id %>"><%= category.name %></a>
+            </li>
         <% }); %>
     </ul>
-</section>
-
+</main>
 <%- include('partials/footer') %>
