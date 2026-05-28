@@ -1,20 +1,27 @@
 <%- include('partials/header') %>
-
-<section class="page-section">
-    <h1>Service Projects</h1>
+<main class="content-wrapper">
+    <h1><%= title %></h1>
+    
     <p>Join us in making a difference through these upcoming projects:</p>
     
-    <ul class="project-list">
-        <li>
-            <strong>Park Cleanup:</strong> Join us to clean up local parks and make them beautiful!
-        </li>
-        <li>
-            <strong>Food Drive:</strong> Help collect and distribute food to those in need.
-        </li>
-        <li>
-            <strong>Community Tutoring:</strong> Volunteer to tutor students in various subjects.
-        </li>
-    </ul>
-</section>
-
+    <div class="project-list">
+        <% if (projects && projects.length > 0) { %>
+            <% projects.forEach(project => { %>
+                <div class="project-card">
+                    <h2>
+                        <a href="/project/<%= project.project_id %>"><%= project.title %></a>
+                    </h2>
+                    <p><strong>Date:</strong> <%= project.date %></p>
+                    <p><strong>Location:</strong> <%= project.location %></p>
+                    <p>
+                        <strong>Organization:</strong> 
+                        <a href="/organization/<%= project.organization_id %>"><%= project.organization_name %></a>
+                    </p>
+                </div>
+            <% }) %>
+        <% } else { %>
+            <p>No upcoming projects at this time.</p>
+        <% } %>
+    </div>
+</main>
 <%- include('partials/footer') %>
