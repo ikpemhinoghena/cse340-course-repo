@@ -1,14 +1,22 @@
 <%- include('partials/header') %>
 <main class="content-wrapper">
     <h1><%= title %></h1>
+    
+    <!-- ADD NEW CATEGORY LINK -->
+    <p><a href="/new-category">Add New Category</a></p>
+    
     <p>Browse opportunities by category:</p>
     
-    <ul class="category-list">
-        <% categories.forEach(category => { %>
-            <li>
-                <a href="/category/<%= category.category_id %>"><%= category.name %></a>
-            </li>
-        <% }); %>
-    </ul>
+    <% if (categories && categories.length > 0) { %>
+        <ul class="category-list">
+            <% categories.forEach(category => { %>
+                <li>
+                    <a href="/category/<%= category.category_id %>"><%= category.name %></a>
+                </li>
+            <% }); %>
+        </ul>
+    <% } else { %>
+        <p>No categories currently listed.</p>
+    <% } %>
 </main>
 <%- include('partials/footer') %>
