@@ -14,6 +14,11 @@
         <a href="/organization/<%= project.organization_id %>"><%= project.organization_name %></a>
     </p>
 
+    <!-- NEW LINK ADDED HERE -->
+    <p><a href="/edit-project/<%= project.project_id %>">Edit Project</a></p>
+
+    <p><a href="/assign-categories/<%= project.project_id %>">Edit Categories</a></p>
+
     <% if (categories && categories.length > 0) { %>
         <div class="category-tags">
             <strong>Categories:</strong>
