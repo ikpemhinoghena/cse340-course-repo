@@ -4,6 +4,12 @@
 
     <h2><%= category.name %></h2>
     
+    <!-- NEW LINKS ADDED HERE -->
+    <p>
+        <a href="/edit-category/<%= category.category_id %>">Edit Category</a> | 
+        <a href="/new-category">Add New Category</a>
+    </p>
+
     <h3>Service Projects in this Category</h3>
     <% if (projects && projects.length > 0) { %>
         <ul class="project-list">
