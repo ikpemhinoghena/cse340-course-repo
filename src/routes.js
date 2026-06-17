@@ -42,6 +42,11 @@ import {
     requireRole,
     showUsersPage
 } from './controllers/users.js';
+// IMPORT VOLUNTEER CONTROLLERS
+import { 
+    processAddVolunteer, 
+    processRemoveVolunteer 
+} from './controllers/volunteers.js';
 
 const router = express.Router();
 
@@ -93,6 +98,10 @@ router.get('/dashboard', requireLogin, showDashboard);
 
 // PROTECTED USERS LIST ROUTE (Admin Only)
 router.get('/users', requireRole('admin'), showUsersPage);
+
+// VOLUNTEER ROUTES (Protected)
+router.post('/volunteer/:projectId', requireLogin, processAddVolunteer);
+router.post('/unvolunteer/:projectId', requireLogin, processRemoveVolunteer);
 
 // error-handling routes
 router.get('/test-error', testErrorPage);

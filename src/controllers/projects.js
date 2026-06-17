@@ -1,6 +1,7 @@
 // Import any needed model functions
 import { getUpcomingProjects, getProjectDetails, getCategoriesByProjectId, createProject, updateProject } from '../models/projects.js';
 import { getAllOrganizations } from '../models/organizations.js';
+import { isUserVolunteering } from '../models/volunteers.js';
 import { body, validationResult } from 'express-validator';
 
 // Define constants
@@ -36,21 +37,38 @@ const showProjectsPage = async (req, res) => {
 };
 
 const showProjectDetailsPage = async (req, res, next) => {
-    const projectId = req.params.id;
-    const project = await getProjectDetails(projectId);
-    
-    if (!project) {
-        // If project not found, trigger a 404 error
-        const err = new Error('Project Not Found');
-        err.status = 404;
-        return next(err);
+    try {
+        const projectId = req.params.id;
+        const project = await getProjectDetails(projectId);
+        
+        if (!project) {
+            // If project not found, trigger a 404 error
+            const err = new Error('Project Not Found');
+            err.status = 404;
+            return next(err);
+        }
+
+        // Get the categories for this project
+        const categories = await getCategoriesByProjectId(projectId);
+
+        // Check if the logged-in user is volunteering for this project
+        let isVolunteering = false;
+        if (req.session && req.session.user) {
+            isVolunteering = await isUserVolunteering(req.session.user.user_id, projectId);
+        }
+
+        const title = 'Service Project Details';
+        res.render('project', { 
+            title, 
+            project, 
+            categories,
+            isVolunteering 
+        });
+    } catch (error) {
+        console.error('Error in showProjectDetailsPage:', error);
+        req.flash('error', 'Could not load project details.');
+        res.redirect('/projects');
     }
-
-    // Get the categories for this project
-    const categories = await getCategoriesByProjectId(projectId);
-
-    const title = 'Service Project Details';
-    res.render('project', { title, project, categories });
 };
 
 const showNewProjectForm = async (req, res) => {

@@ -27,5 +27,23 @@
             <% }) %>
         </div>
     <% } %>
+
+    <!-- Volunteer Section -->
+    <div class="volunteer-section" style="margin-top: 2rem; padding-top: 1rem; border-top: 1px solid #eee;">
+        <% if (isLoggedIn) { %>
+            <% if (isVolunteering) { %>
+                <p class="success-message" style="color: green; font-weight: bold;">You are currently volunteering for this project!</p>
+                <form action="/unvolunteer/<%= project.project_id %>" method="POST">
+                    <button type="submit" class="btn btn-secondary">Remove Me as Volunteer</button>
+                </form>
+            <% } else { %>
+                <form action="/volunteer/<%= project.project_id %>" method="POST">
+                    <button type="submit" class="btn btn-primary">Volunteer for this Project</button>
+                </form>
+            <% } %>
+        <% } else { %>
+            <p><a href="/login">Log in</a> to volunteer for this project.</p>
+        <% } %>
+    </div>
 </main>
 <%- include('partials/footer') %>
